@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from ml.predict import predict_dropout
+from ml.predict import predict_all
 
 app = FastAPI(
-    title="ABGS - Adaptive Behavior Goal System",
+    title="ABGS | Adaptive Behavior Goal System",
     description="AI-powered habit and goal tracking API",
     version="1.0.0"
 )
@@ -39,4 +39,4 @@ def health():
 
 @app.post("/predict")
 def predict(features: UserFeatures):
-    return predict_dropout(features.dict())
+    return predict_all(features.dict())

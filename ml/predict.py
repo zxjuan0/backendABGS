@@ -1,8 +1,5 @@
 import joblib
-import numpy as np
-
-model = joblib.load("ml/models/dropout_model.joblib")
-scaler = joblib.load("ml/models/scaler.joblib")
+import pandas as pd
 
 FEATURES = [
     "streak_length",
@@ -13,13 +10,25 @@ FEATURES = [
     "goal_age_days"
 ]
 
-def predict_dropout(user_features: dict) -> dict:
-    x = np.array([[user_features[f] for f in FEATURES]])
-    x_scaled = scaler.transform(x)
-    prob = model.predict_proba(x_scaled)[0][1]
-    risk = "high" if prob > 0.7 else ("medium" if prob > 0.4 else "low")
+# Load all models
+model_200 = joblib.load("ml/models/model_200.pkl")
+model_20k = joblib.load("ml/models/model_20k.pkl")
+model_200k = joblib.load("ml/models/model_200k.pkl")
+
+
+def predict_all(user_features: dict):
+    x = pd.DataFrame([[user_features[f] for f in FEATURES]], columns=FEATURES)
+
+    def run_model(model):
+        prob = model.predict_proba(x)[0][1]
+        risk = "high" if prob > 0.7 else ("medium" if prob > 0.4 else "low")
+        return {
+            "probability": round(float(prob), 3),
+            "risk": risk
+        }
 
     return {
-        "dropout_probability": round(float(prob), 3),
-        "risk_level": risk
+        "model_200": run_model(model_200),
+        "model_20k": run_model(model_20k),
+        "model_200k": run_model(model_200k),
     }
