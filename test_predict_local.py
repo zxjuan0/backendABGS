@@ -1,4 +1,4 @@
-from ml.predict import predict_dropout
+from ml.predict import predict_all
 
 sample = {
     "streak_length": 7,
@@ -9,5 +9,5 @@ sample = {
     "goal_age_days": 30,
 }
 
-result = predict_dropout(sample)
+result = predict_all(sample)
 print(result)
